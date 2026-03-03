@@ -10,17 +10,17 @@
 
     <style>
       :root {
-        --bg: #0f172a;
-        --bg-elevated: #111827;
-        --border-subtle: #1f2937;
-        --text: #f9fafb;
-        --text-muted: #9ca3af;
-        --accent: #22c55e;
-        --accent-soft: rgba(34, 197, 94, 0.12);
-        --danger: #f97373;
-        --radius-lg: 18px;
+        --bg: #f5f5f7;
+        --bg-elevated: #ffffff;
+        --border-subtle: #d2d2d7;
+        --text: #111827;
+        --text-muted: #6b7280;
+        --accent: #34c759;
+        --accent-soft: rgba(52, 199, 89, 0.12);
+        --danger: #ef4444;
+        --radius-lg: 20px;
         --radius-md: 10px;
-        --shadow-soft: 0 22px 40px rgba(15, 23, 42, 0.75);
+        --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.12);
       }
 
       * {
@@ -32,7 +32,7 @@
       body {
         font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
           "Segoe UI", sans-serif;
-        background: radial-gradient(circle at top left, #1e293b, #020617 55%);
+        background: radial-gradient(circle at top left, #ffffff, #f5f5f7 60%);
         color: var(--text);
         min-height: 100vh;
         display: flex;
@@ -46,13 +46,13 @@
         max-width: 1100px;
         background: linear-gradient(
             145deg,
-            rgba(15, 23, 42, 0.94),
-            rgba(15, 23, 42, 0.98)
+            rgba(255, 255, 255, 0.96),
+            rgba(255, 255, 255, 0.98)
           ),
-          radial-gradient(circle at top right, rgba(34, 197, 94, 0.16), transparent);
-        border-radius: 28px;
+          radial-gradient(circle at top right, rgba(148, 163, 184, 0.12), transparent);
+        border-radius: 32px;
         box-shadow: var(--shadow-soft);
-        border: 1px solid rgba(148, 163, 184, 0.18);
+        border: 1px solid rgba(210, 210, 215, 0.9);
         padding: 26px 26px 26px 26px;
         display: grid;
         grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
@@ -75,7 +75,7 @@
         display: flex;
         flex-direction: column;
         gap: 22px;
-        border-right: 1px solid rgba(31, 41, 55, 0.9);
+        border-right: 1px solid rgba(226, 232, 240, 0.9);
         padding-right: 20px;
       }
 
@@ -99,6 +99,7 @@
         align-items: flex-start;
         justify-content: space-between;
         gap: 16px;
+        padding-bottom: 6px;
       }
 
       .brand {
@@ -117,14 +118,14 @@
         height: 34px;
         width: 34px;
         border-radius: 999px;
-        background: radial-gradient(circle at 30% 20%, #bbf7d0, #22c55e);
+        background: radial-gradient(circle at 30% 20%, #e5f9ee, #34c759);
         display: flex;
         align-items: center;
         justify-content: center;
         color: #022c22;
         font-weight: 800;
         font-size: 18px;
-        box-shadow: 0 0 22px rgba(34, 197, 94, 0.65);
+        box-shadow: 0 0 18px rgba(52, 199, 89, 0.55);
       }
 
       .title {
@@ -136,7 +137,7 @@
       .subtitle {
         font-size: 13px;
         color: var(--text-muted);
-        max-width: 360px;
+        max-width: 380px;
       }
 
       .tagline-chip {
@@ -145,17 +146,15 @@
         font-size: 11px;
         text-transform: uppercase;
         letter-spacing: 0.16em;
-        border: 1px solid rgba(148, 163, 184, 0.35);
+        border: 1px solid rgba(210, 210, 215, 0.9);
         color: var(--text-muted);
-        background: radial-gradient(circle at left, rgba(34, 197, 94, 0.2), transparent);
+        background: rgba(249, 250, 251, 0.9);
       }
 
       .form-card {
-        background: radial-gradient(circle at top left, #020617, #020617) padding-box,
-          linear-gradient(135deg, rgba(34, 197, 94, 0.35), rgba(148, 163, 184, 0.25))
-            border-box;
+        background: #ffffff;
         border-radius: var(--radius-lg);
-        border: 1px solid transparent;
+        border: 1px solid rgba(229, 231, 235, 0.9);
         padding: 18px 18px 16px;
         display: flex;
         flex-direction: column;
@@ -202,7 +201,7 @@
         display: flex;
         align-items: center;
         gap: 8px;
-        background: rgba(15, 23, 42, 0.9);
+        background: #f9fafb;
         border-radius: var(--radius-md);
         border: 1px solid var(--border-subtle);
         padding: 8px 10px;
@@ -211,9 +210,9 @@
       }
 
       .input-shell:focus-within {
-        border-color: rgba(34, 197, 94, 0.8);
-        box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.4);
-        background: #020617;
+        border-color: rgba(37, 99, 235, 0.7);
+        box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.3);
+        background: #ffffff;
       }
 
       .input-shell input,
@@ -241,9 +240,9 @@
       .unit-toggle {
         display: inline-flex;
         border-radius: 999px;
-        border: 1px solid rgba(31, 41, 55, 0.9);
+        border: 1px solid rgba(209, 213, 219, 1);
         padding: 2px;
-        background: rgba(15, 23, 42, 0.9);
+        background: #f3f4f6;
       }
 
       .unit-pill {
@@ -257,7 +256,7 @@
 
       .unit-pill.active {
         background: var(--accent-soft);
-        color: #bbf7d0;
+        color: #065f46;
       }
 
       textarea {
@@ -293,9 +292,9 @@
         letter-spacing: 0.03em;
         text-transform: uppercase;
         font-size: 12px;
-        color: #022c22;
-        background: linear-gradient(135deg, #4ade80, #22c55e);
-        box-shadow: 0 16px 32px rgba(22, 163, 74, 0.5);
+        color: #ffffff;
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        box-shadow: 0 16px 32px rgba(37, 99, 235, 0.35);
         transition: transform 0.12s ease, box-shadow 0.12s ease,
           filter 0.12s ease;
         white-space: nowrap;
@@ -322,7 +321,7 @@
         width: 9px;
         height: 9px;
         border-radius: 999px;
-        background: #bbf7d0;
+        background: #bfdbfe;
       }
 
       #statusMessage {
@@ -351,9 +350,9 @@
       }
 
       .panel {
-        background: rgba(15, 23, 42, 0.85);
+        background: #ffffff;
         border-radius: var(--radius-lg);
-        border: 1px solid rgba(31, 41, 55, 0.95);
+        border: 1px solid rgba(229, 231, 235, 0.9);
         padding: 14px 14px 12px;
       }
 
@@ -417,13 +416,8 @@
 
       .metric-card {
         border-radius: 14px;
-        border: 1px solid rgba(31, 41, 55, 0.9);
-        background: radial-gradient(
-            circle at top left,
-            rgba(34, 197, 94, 0.06),
-            transparent
-          ),
-          #020617;
+        border: 1px solid rgba(226, 232, 240, 0.9);
+        background: #f9fafb;
         padding: 9px 9px 8px;
       }
 
@@ -465,10 +459,10 @@
         margin-top: 4px;
         padding: 9px 10px 8px;
         border-radius: 10px;
-        background: rgba(15, 23, 42, 0.9);
-        border: 1px dashed rgba(55, 65, 81, 0.9);
+        background: #f9fafb;
+        border: 1px dashed rgba(209, 213, 219, 1);
         font-size: 12px;
-        color: #e5e7eb;
+        color: #374151;
         white-space: pre-wrap;
       }
 
@@ -496,8 +490,8 @@
       .history-item {
         padding: 7px 8px;
         border-radius: 10px;
-        border: 1px solid rgba(31, 41, 55, 0.9);
-        background: rgba(15, 23, 42, 0.9);
+        border: 1px solid rgba(226, 232, 240, 0.9);
+        background: #f9fafb;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -524,9 +518,9 @@
         font-size: 11px;
         padding: 2px 7px;
         border-radius: 999px;
-        background: rgba(34, 197, 94, 0.12);
-        color: #bbf7d0;
-        border: 1px solid rgba(34, 197, 94, 0.5);
+        background: rgba(52, 199, 89, 0.12);
+        color: #166534;
+        border: 1px solid rgba(52, 199, 89, 0.4);
       }
 
       .empty-state {
@@ -629,53 +623,9 @@
         }
       }
 
-      .security-banner {
-        background: #fef3c7;
-        color: #92400e;
-        padding: 10px 16px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-        font-size: 13px;
-        font-weight: 600;
-        border-bottom: 1px solid rgba(146, 64, 14, 0.2);
-      }
-
-      .security-banner[hidden] {
-        display: none;
-      }
-
-      .security-banner-text {
-        flex: 1;
-      }
-
-      .security-banner-dismiss {
-        background: transparent;
-        border: 1px solid #92400e;
-        color: #92400e;
-        padding: 4px 10px;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 11px;
-        font-weight: 600;
-        transition: background-color 0.18s ease, color 0.18s ease;
-      }
-
-      .security-banner-dismiss:hover {
-        background: rgba(146, 64, 14, 0.1);
-      }
     </style>
   </head>
   <body>
-    <div id="securityBanner" class="security-banner">
-      <span class="security-banner-text">
-        DEMO MODE: API key is exposed in source code. For production use, move your key to a backend server. After this workshop, rotate your OpenAI key at platform.openai.com.
-      </span>
-      <button type="button" class="security-banner-dismiss" id="securityBannerDismiss">
-        Dismiss
-      </button>
-    </div>
     <main class="app-shell">
       <section class="left-pane">
         <header class="app-header">
@@ -860,39 +810,6 @@
 
     <script>
       (function () {
-        const securityBanner = document.getElementById("securityBanner");
-        const securityBannerDismiss = document.getElementById("securityBannerDismiss");
-
-        function checkBannerDismissed() {
-          try {
-            const dismissed = window.sessionStorage.getItem("fitcoach_banner_dismissed");
-            if (dismissed === "true") {
-              if (securityBanner) {
-                securityBanner.hidden = true;
-              }
-            }
-          } catch (e) {
-            console.error("FitCoach sessionStorage error", e);
-          }
-        }
-
-        function dismissBanner() {
-          try {
-            window.sessionStorage.setItem("fitcoach_banner_dismissed", "true");
-            if (securityBanner) {
-              securityBanner.hidden = true;
-            }
-          } catch (e) {
-            console.error("FitCoach sessionStorage error", e);
-          }
-        }
-
-        checkBannerDismissed();
-
-        if (securityBannerDismiss) {
-          securityBannerDismiss.addEventListener("click", dismissBanner);
-        }
-
         const form = document.getElementById("sessionForm");
         const workoutTypeInput = document.getElementById("workoutType");
         const durationInput = document.getElementById("durationMinutes");
