@@ -1,0 +1,1514 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FitCoach AI</title>
+
+    <!-- Config files -->
+    <script src="config.js"></script>
+
+    <style>
+      :root {
+        --bg: #0f172a;
+        --bg-elevated: #111827;
+        --border-subtle: #1f2937;
+        --text: #f9fafb;
+        --text-muted: #9ca3af;
+        --accent: #22c55e;
+        --accent-soft: rgba(34, 197, 94, 0.12);
+        --danger: #f97373;
+        --radius-lg: 18px;
+        --radius-md: 10px;
+        --shadow-soft: 0 22px 40px rgba(15, 23, 42, 0.75);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+          "Segoe UI", sans-serif;
+        background: radial-gradient(circle at top left, #1e293b, #020617 55%);
+        color: var(--text);
+        min-height: 100vh;
+        display: flex;
+        align-items: stretch;
+        justify-content: center;
+        padding: 32px 16px;
+      }
+
+      .app-shell {
+        width: 100%;
+        max-width: 1100px;
+        background: linear-gradient(
+            145deg,
+            rgba(15, 23, 42, 0.94),
+            rgba(15, 23, 42, 0.98)
+          ),
+          radial-gradient(circle at top right, rgba(34, 197, 94, 0.16), transparent);
+        border-radius: 28px;
+        box-shadow: var(--shadow-soft);
+        border: 1px solid rgba(148, 163, 184, 0.18);
+        padding: 26px 26px 26px 26px;
+        display: grid;
+        grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+        gap: 24px;
+      }
+
+      @media (max-width: 900px) {
+        body {
+          padding: 20px 12px;
+        }
+
+        .app-shell {
+          grid-template-columns: minmax(0, 1fr);
+          padding: 22px 18px 20px;
+          border-radius: 22px;
+        }
+      }
+
+      .left-pane {
+        display: flex;
+        flex-direction: column;
+        gap: 22px;
+        border-right: 1px solid rgba(31, 41, 55, 0.9);
+        padding-right: 20px;
+      }
+
+      @media (max-width: 900px) {
+        .left-pane {
+          border-right: none;
+          border-bottom: 1px solid rgba(31, 41, 55, 0.9);
+          padding-right: 0;
+          padding-bottom: 18px;
+        }
+      }
+
+      .right-pane {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      header.app-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
+      }
+
+      .brand {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .brand-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .brand-badge {
+        height: 34px;
+        width: 34px;
+        border-radius: 999px;
+        background: radial-gradient(circle at 30% 20%, #bbf7d0, #22c55e);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #022c22;
+        font-weight: 800;
+        font-size: 18px;
+        box-shadow: 0 0 22px rgba(34, 197, 94, 0.65);
+      }
+
+      .title {
+        font-weight: 700;
+        font-size: 26px;
+        letter-spacing: 0.03em;
+      }
+
+      .subtitle {
+        font-size: 13px;
+        color: var(--text-muted);
+        max-width: 360px;
+      }
+
+      .tagline-chip {
+        padding: 4px 10px;
+        border-radius: 999px;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        border: 1px solid rgba(148, 163, 184, 0.35);
+        color: var(--text-muted);
+        background: radial-gradient(circle at left, rgba(34, 197, 94, 0.2), transparent);
+      }
+
+      .form-card {
+        background: radial-gradient(circle at top left, #020617, #020617) padding-box,
+          linear-gradient(135deg, rgba(34, 197, 94, 0.35), rgba(148, 163, 184, 0.25))
+            border-box;
+        border-radius: var(--radius-lg);
+        border: 1px solid transparent;
+        padding: 18px 18px 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+
+      .form-row-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 12px;
+      }
+
+      @media (max-width: 700px) {
+        .form-row-grid {
+          grid-template-columns: minmax(0, 1fr);
+        }
+      }
+
+      .field {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .field-label-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+      }
+
+      label {
+        font-size: 13px;
+        font-weight: 500;
+        color: #e5e7eb;
+      }
+
+      .label-hint {
+        font-size: 11px;
+        color: var(--text-muted);
+      }
+
+      .input-shell {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(15, 23, 42, 0.9);
+        border-radius: var(--radius-md);
+        border: 1px solid var(--border-subtle);
+        padding: 8px 10px;
+        transition: border-color 0.18s ease, box-shadow 0.18s ease,
+          background-color 0.18s ease;
+      }
+
+      .input-shell:focus-within {
+        border-color: rgba(34, 197, 94, 0.8);
+        box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.4);
+        background: #020617;
+      }
+
+      .input-shell input,
+      .input-shell select,
+      .input-shell textarea {
+        background: transparent;
+        border: none;
+        outline: none;
+        color: var(--text);
+        font-size: 13px;
+        width: 100%;
+      }
+
+      .input-shell input::placeholder,
+      .input-shell textarea::placeholder {
+        color: rgba(148, 163, 184, 0.7);
+      }
+
+      .input-shell select {
+        appearance: none;
+        padding-right: 12px;
+        cursor: pointer;
+      }
+
+      .unit-toggle {
+        display: inline-flex;
+        border-radius: 999px;
+        border: 1px solid rgba(31, 41, 55, 0.9);
+        padding: 2px;
+        background: rgba(15, 23, 42, 0.9);
+      }
+
+      .unit-pill {
+        font-size: 11px;
+        padding: 3px 8px;
+        border-radius: 999px;
+        cursor: pointer;
+        color: var(--text-muted);
+        transition: background-color 0.18s ease, color 0.18s ease;
+      }
+
+      .unit-pill.active {
+        background: var(--accent-soft);
+        color: #bbf7d0;
+      }
+
+      textarea {
+        resize: vertical;
+        min-height: 70px;
+        max-height: 180px;
+      }
+
+      .form-footer {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-top: 2px;
+      }
+
+      @media (max-width: 600px) {
+        .form-footer {
+          flex-direction: column;
+          align-items: stretch;
+        }
+      }
+
+      .primary-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 9px 18px;
+        border-radius: 999px;
+        border: none;
+        cursor: pointer;
+        font-weight: 600;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+        font-size: 12px;
+        color: #022c22;
+        background: linear-gradient(135deg, #4ade80, #22c55e);
+        box-shadow: 0 16px 32px rgba(22, 163, 74, 0.5);
+        transition: transform 0.12s ease, box-shadow 0.12s ease,
+          filter 0.12s ease;
+        white-space: nowrap;
+      }
+
+      .primary-btn:hover:not(:disabled) {
+        transform: translateY(-1px);
+        box-shadow: 0 20px 38px rgba(22, 163, 74, 0.6);
+        filter: brightness(1.03);
+      }
+
+      .primary-btn:active:not(:disabled) {
+        transform: translateY(0);
+        box-shadow: 0 10px 24px rgba(22, 163, 74, 0.55);
+      }
+
+      .primary-btn:disabled {
+        opacity: 0.65;
+        cursor: default;
+        box-shadow: none;
+      }
+
+      .btn-icon-dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 999px;
+        background: #bbf7d0;
+      }
+
+      #statusMessage {
+        flex: 1;
+        font-size: 12px;
+        min-height: 1.3em;
+        color: var(--text-muted);
+      }
+
+      #statusMessage.status--loading {
+        color: #e5e7eb;
+      }
+
+      #statusMessage.status--success {
+        color: #bbf7d0;
+      }
+
+      #statusMessage.status--error {
+        color: var(--danger);
+      }
+
+      .status-subcopy {
+        font-size: 11px;
+        color: var(--text-muted);
+        margin-top: 4px;
+      }
+
+      .panel {
+        background: rgba(15, 23, 42, 0.85);
+        border-radius: var(--radius-lg);
+        border: 1px solid rgba(31, 41, 55, 0.95);
+        padding: 14px 14px 12px;
+      }
+
+      @keyframes fadeInSoft {
+        from {
+          opacity: 0;
+          transform: translateY(2px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .fade-in-card {
+        opacity: 0;
+        animation: fadeInSoft 0.4s ease-out forwards;
+      }
+
+      .panel-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+
+      .panel-title {
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+      }
+
+      .panel-pill {
+        font-size: 11px;
+        padding: 2px 8px;
+        border-radius: 999px;
+        border: 1px solid rgba(55, 65, 81, 0.9);
+        color: var(--text-muted);
+      }
+
+      .results-body {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .metric-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      @media (max-width: 500px) {
+        .metric-grid {
+          grid-template-columns: minmax(0, 1fr);
+        }
+      }
+
+      .metric-card {
+        border-radius: 14px;
+        border: 1px solid rgba(31, 41, 55, 0.9);
+        background: radial-gradient(
+            circle at top left,
+            rgba(34, 197, 94, 0.06),
+            transparent
+          ),
+          #020617;
+        padding: 9px 9px 8px;
+      }
+
+      .metric-label {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.09em;
+        color: var(--text-muted);
+        margin-bottom: 3px;
+      }
+
+      .metric-value {
+        font-size: 18px;
+        font-weight: 600;
+      }
+
+      .metric-caption {
+        font-size: 11px;
+        color: var(--text-muted);
+        margin-top: 3px;
+      }
+
+      .pill-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 4px;
+      }
+
+      .small-pill {
+        font-size: 10px;
+        padding: 3px 7px;
+        border-radius: 999px;
+        border: 1px solid rgba(55, 65, 81, 0.9);
+        color: var(--text-muted);
+      }
+
+      .summary-block {
+        margin-top: 4px;
+        padding: 9px 10px 8px;
+        border-radius: 10px;
+        background: rgba(15, 23, 42, 0.9);
+        border: 1px dashed rgba(55, 65, 81, 0.9);
+        font-size: 12px;
+        color: #e5e7eb;
+        white-space: pre-wrap;
+      }
+
+      .summary-block strong {
+        color: #bbf7d0;
+        font-weight: 600;
+      }
+
+      #resultsSection[hidden],
+      #historySection[hidden] {
+        display: none;
+      }
+
+      #historyList {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        max-height: 260px;
+        overflow: auto;
+      }
+
+      .history-item {
+        padding: 7px 8px;
+        border-radius: 10px;
+        border: 1px solid rgba(31, 41, 55, 0.9);
+        background: rgba(15, 23, 42, 0.9);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        font-size: 12px;
+      }
+
+      .history-main {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      .history-title {
+        font-weight: 500;
+      }
+
+      .history-meta {
+        font-size: 11px;
+        color: var(--text-muted);
+      }
+
+      .history-tag {
+        font-size: 11px;
+        padding: 2px 7px;
+        border-radius: 999px;
+        background: rgba(34, 197, 94, 0.12);
+        color: #bbf7d0;
+        border: 1px solid rgba(34, 197, 94, 0.5);
+      }
+
+      .empty-state {
+        font-size: 12px;
+        color: var(--text-muted);
+      }
+
+      .ai-line {
+        margin: 0 0 4px;
+      }
+
+      .ai-line:last-child {
+        margin-bottom: 0;
+      }
+
+      .ai-line--highlight {
+        border-left: 2px solid #22c55e;
+        padding-left: 8px;
+      }
+
+      .history-controls {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        margin-bottom: 6px;
+        margin-top: -4px;
+      }
+
+      .history-clear-btn {
+        font-size: 11px;
+        padding: 4px 10px;
+        border-radius: 999px;
+        border: 1px solid rgba(248, 113, 113, 0.9);
+        background: transparent;
+        color: #fecaca;
+        cursor: pointer;
+        transition: background-color 0.18s ease, color 0.18s ease;
+      }
+
+      .history-clear-btn:hover {
+        background: rgba(248, 113, 113, 0.12);
+        color: #fee2e2;
+      }
+
+      .history-confirm {
+        font-size: 11px;
+        color: #facc15;
+        margin-bottom: 6px;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .history-confirm button {
+        font-size: 11px;
+        padding: 3px 8px;
+        border-radius: 999px;
+        border: 1px solid rgba(55, 65, 81, 0.9);
+        background: transparent;
+        color: #e5e7eb;
+        cursor: pointer;
+      }
+
+      .history-confirm button.history-confirm-yes {
+        border-color: rgba(248, 113, 113, 0.9);
+        color: #fecaca;
+      }
+
+      .history-success {
+        font-size: 11px;
+        color: #bbf7d0;
+        opacity: 0;
+        transition: opacity 0.25s ease;
+      }
+
+      @media (max-width: 600px) {
+        .app-shell {
+          max-width: 600px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        body {
+          padding: 16px 10px;
+        }
+
+        .app-shell {
+          padding: 18px 14px 16px;
+          border-radius: 18px;
+        }
+
+        .form-card {
+          padding: 14px 12px 12px;
+        }
+
+        .panel {
+          padding: 12px;
+        }
+      }
+
+      .security-banner {
+        background: #fef3c7;
+        color: #92400e;
+        padding: 10px 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        font-size: 13px;
+        font-weight: 600;
+        border-bottom: 1px solid rgba(146, 64, 14, 0.2);
+      }
+
+      .security-banner[hidden] {
+        display: none;
+      }
+
+      .security-banner-text {
+        flex: 1;
+      }
+
+      .security-banner-dismiss {
+        background: transparent;
+        border: 1px solid #92400e;
+        color: #92400e;
+        padding: 4px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 11px;
+        font-weight: 600;
+        transition: background-color 0.18s ease, color 0.18s ease;
+      }
+
+      .security-banner-dismiss:hover {
+        background: rgba(146, 64, 14, 0.1);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="securityBanner" class="security-banner">
+      <span class="security-banner-text">
+        DEMO MODE: API key is exposed in source code. For production use, move your key to a backend server. After this workshop, rotate your OpenAI key at platform.openai.com.
+      </span>
+      <button type="button" class="security-banner-dismiss" id="securityBannerDismiss">
+        Dismiss
+      </button>
+    </div>
+    <main class="app-shell">
+      <section class="left-pane">
+        <header class="app-header">
+          <div class="brand">
+            <div class="brand-row">
+              <div class="brand-badge">F</div>
+              <div class="title">FitCoach AI</div>
+            </div>
+            <p class="subtitle">
+              Your personalized nutrition and recovery coach — tuned to how your
+              body is actually feeling.
+            </p>
+          </div>
+          <div class="tagline-chip">Daily targets · Adaptive · Recovery first</div>
+        </header>
+
+        <section class="form-card" aria-label="Workout input form">
+          <form id="sessionForm" novalidate>
+            <div class="form-row-grid">
+              <div class="field">
+                <div class="field-label-row">
+                  <label for="workoutType">Workout Type</label>
+                  <span class="label-hint">e.g. running, lifting, yoga</span>
+                </div>
+                <div class="input-shell">
+                  <input
+                    id="workoutType"
+                    type="text"
+                    placeholder="Interval runs, pull session, power yoga..."
+                    autocomplete="off"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div class="field">
+                <div class="field-label-row">
+                  <label for="durationMinutes">Duration</label>
+                  <span class="label-hint">Minutes</span>
+                </div>
+                <div class="input-shell">
+                  <input
+                    id="durationMinutes"
+                    type="number"
+                    min="1"
+                    step="1"
+                    placeholder="45"
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div class="form-row-grid">
+              <div class="field">
+                <div class="field-label-row">
+                  <label for="intensityLevel">Intensity</label>
+                </div>
+                <div class="input-shell">
+                  <select id="intensityLevel" required>
+                    <option value="" disabled selected hidden>Select intensity</option>
+                    <option value="Light">Light</option>
+                    <option value="Moderate">Moderate</option>
+                    <option value="Hard">Hard</option>
+                    <option value="Max Effort">Max Effort</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="field">
+                <div class="field-label-row">
+                  <label for="bodyWeight">Body Weight</label>
+                  <div class="unit-toggle" aria-label="Weight unit toggle">
+                    <button
+                      type="button"
+                      id="unitKg"
+                      class="unit-pill active"
+                      data-unit="kg"
+                    >
+                      kg
+                    </button>
+                    <button type="button" id="unitLbs" class="unit-pill" data-unit="lbs">
+                      lbs
+                    </button>
+                  </div>
+                </div>
+                <div class="input-shell">
+                  <input
+                    id="bodyWeight"
+                    type="number"
+                    min="1"
+                    step="0.5"
+                    placeholder="72.5"
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div class="field">
+              <div class="field-label-row">
+                <label for="feedbackText">Feedback</label>
+                <span class="label-hint">
+                  How is your body responding right now?
+                </span>
+              </div>
+              <div class="input-shell">
+                <textarea
+                  id="feedbackText"
+                  placeholder="Still gaining weight, craving sugar at night, legs feel heavy on climbs..."
+                ></textarea>
+              </div>
+            </div>
+
+            <div class="form-footer">
+              <button id="submitButton" type="submit" class="primary-btn">
+                <span class="btn-icon-dot"></span>
+                <span>Get My Targets</span>
+              </button>
+              <div>
+                <div id="statusMessage" aria-live="polite"></div>
+                <div class="status-subcopy">
+                  No data is sent until you press <strong>Get My Targets</strong>.
+                </div>
+              </div>
+            </div>
+          </form>
+        </section>
+      </section>
+
+      <section class="right-pane">
+        <section id="resultsSection" class="panel" hidden>
+          <div class="panel-header">
+            <div class="panel-title">Today&apos;s Targets</div>
+            <div class="panel-pill" id="resultsSummaryTag">Awaiting first session</div>
+          </div>
+          <div class="results-body" id="resultsBody">
+            <!-- Populated by JavaScript -->
+          </div>
+        </section>
+
+        <section id="historySection" class="panel" hidden>
+          <div class="panel-header">
+            <div class="panel-title">Session History</div>
+            <div class="panel-pill" id="historyCountLabel">0 sessions</div>
+          </div>
+          <div class="history-controls">
+            <button
+              type="button"
+              id="historyClearButton"
+              class="history-clear-btn"
+            >
+              Clear History
+            </button>
+            <div id="historySuccessMessage" class="history-success"></div>
+          </div>
+          <div id="historyConfirm" class="history-confirm" hidden>
+            <span id="historyConfirmText"></span>
+            <button
+              type="button"
+              class="history-confirm-yes"
+              id="historyConfirmYes"
+            >
+              Confirm Delete
+            </button>
+            <button
+              type="button"
+              class="history-confirm-no"
+              id="historyConfirmNo"
+            >
+              Cancel
+            </button>
+          </div>
+          <ul id="historyList"></ul>
+          <p id="historyEmptyState" class="empty-state">
+            You&apos;ll see your last few sessions here so you can compare targets and
+            trends over time.
+          </p>
+        </section>
+      </section>
+    </main>
+
+    <script>
+      (function () {
+        const securityBanner = document.getElementById("securityBanner");
+        const securityBannerDismiss = document.getElementById("securityBannerDismiss");
+
+        function checkBannerDismissed() {
+          try {
+            const dismissed = window.sessionStorage.getItem("fitcoach_banner_dismissed");
+            if (dismissed === "true") {
+              if (securityBanner) {
+                securityBanner.hidden = true;
+              }
+            }
+          } catch (e) {
+            console.error("FitCoach sessionStorage error", e);
+          }
+        }
+
+        function dismissBanner() {
+          try {
+            window.sessionStorage.setItem("fitcoach_banner_dismissed", "true");
+            if (securityBanner) {
+              securityBanner.hidden = true;
+            }
+          } catch (e) {
+            console.error("FitCoach sessionStorage error", e);
+          }
+        }
+
+        checkBannerDismissed();
+
+        if (securityBannerDismiss) {
+          securityBannerDismiss.addEventListener("click", dismissBanner);
+        }
+
+        const form = document.getElementById("sessionForm");
+        const workoutTypeInput = document.getElementById("workoutType");
+        const durationInput = document.getElementById("durationMinutes");
+        const intensitySelect = document.getElementById("intensityLevel");
+        const bodyWeightInput = document.getElementById("bodyWeight");
+        const feedbackInput = document.getElementById("feedbackText");
+        const submitButton = document.getElementById("submitButton");
+        const statusMessage = document.getElementById("statusMessage");
+
+        const unitKgBtn = document.getElementById("unitKg");
+        const unitLbsBtn = document.getElementById("unitLbs");
+
+        const resultsSection = document.getElementById("resultsSection");
+        const resultsBody = document.getElementById("resultsBody");
+        const resultsSummaryTag = document.getElementById("resultsSummaryTag");
+
+        const historySection = document.getElementById("historySection");
+        const historyList = document.getElementById("historyList");
+        const historyEmptyState = document.getElementById("historyEmptyState");
+        const historyCountLabel = document.getElementById("historyCountLabel");
+        const historyClearButton = document.getElementById("historyClearButton");
+        const historyConfirm = document.getElementById("historyConfirm");
+        const historyConfirmText = document.getElementById("historyConfirmText");
+        const historyConfirmYes = document.getElementById("historyConfirmYes");
+        const historyConfirmNo = document.getElementById("historyConfirmNo");
+        const historySuccessMessage = document.getElementById(
+          "historySuccessMessage"
+        );
+
+        let weightUnit = "kg";
+        const localStorageKey = "fitcoach_history";
+        const maxSavedRuns =
+          (typeof CONFIG !== "undefined" && CONFIG.MAX_SAVED_RUNS) || 20;
+        let historyWarningEl = null;
+
+        function setStatus(message, variant) {
+          statusMessage.textContent = message || "";
+          statusMessage.classList.remove(
+            "status--loading",
+            "status--success",
+            "status--error"
+          );
+          if (variant) {
+            statusMessage.classList.add("status--" + variant);
+          }
+        }
+
+        function toggleLoading(isLoading) {
+          submitButton.disabled = isLoading;
+          submitButton.innerHTML = isLoading
+            ? '<span class="btn-icon-dot"></span><span>Thinking...</span>'
+            : '<span class="btn-icon-dot"></span><span>Get My Targets</span>';
+        }
+
+        function setUnit(newUnit) {
+          if (newUnit === weightUnit) return;
+          const currentValue = parseFloat(bodyWeightInput.value);
+          if (!Number.isNaN(currentValue)) {
+            if (newUnit === "kg") {
+              bodyWeightInput.value = (currentValue / 2.20462).toFixed(1);
+            } else {
+              bodyWeightInput.value = (currentValue * 2.20462).toFixed(1);
+            }
+          }
+          weightUnit = newUnit;
+          unitKgBtn.classList.toggle("active", weightUnit === "kg");
+          unitLbsBtn.classList.toggle("active", weightUnit === "lbs");
+        }
+
+        unitKgBtn.addEventListener("click", function () {
+          setUnit("kg");
+        });
+        unitLbsBtn.addEventListener("click", function () {
+          setUnit("lbs");
+        });
+
+        function loadHistory() {
+          try {
+            const raw = window.localStorage.getItem(localStorageKey);
+            if (!raw) return [];
+            const parsed = JSON.parse(raw);
+            return Array.isArray(parsed) ? parsed : [];
+          } catch (e) {
+            console.warn("FitCoach storage read error", e);
+            return [];
+          }
+        }
+
+        function saveHistory(sessions) {
+          try {
+            window.localStorage.setItem(localStorageKey, JSON.stringify(sessions));
+          } catch (e) {
+            console.warn("FitCoach storage write error", e);
+            if (!historyWarningEl) {
+              historyWarningEl = document.createElement("div");
+              historyWarningEl.style.marginTop = "6px";
+              historyWarningEl.style.fontSize = "11px";
+              historyWarningEl.style.color = "#facc15";
+              historyWarningEl.textContent =
+                "We couldn't save your past sessions locally, but your current results are still visible.";
+              historySection.appendChild(historyWarningEl);
+            }
+          }
+        }
+
+        function renderHistory() {
+          const sessions = loadHistory();
+          historyList.innerHTML = "";
+
+          historySection.hidden = false;
+          historyConfirm.hidden = true;
+          if (historySuccessMessage) {
+            historySuccessMessage.style.opacity = 0;
+          }
+
+          if (!sessions.length) {
+            historyEmptyState.textContent = "No past sessions yet";
+            historyEmptyState.hidden = false;
+            historyCountLabel.textContent = "0 sessions";
+            historyList.innerHTML = "";
+            return;
+          }
+
+          historyEmptyState.hidden = true;
+          historyCountLabel.textContent =
+            sessions.length + (sessions.length === 1 ? " session" : " sessions");
+
+          sessions.forEach(function (session) {
+            const li = document.createElement("li");
+            li.className = "history-item fade-in-card";
+
+            const main = document.createElement("div");
+            main.className = "history-main";
+
+            const title = document.createElement("div");
+            title.className = "history-title";
+            const durationLabel =
+              typeof session.duration === "number"
+                ? session.duration + " min"
+                : session.duration || "";
+            title.textContent =
+              (session.workoutType || "Workout") +
+              (durationLabel ? " · " + durationLabel : "");
+
+            const meta = document.createElement("div");
+            meta.className = "history-meta";
+            if (session.date) {
+              const dt = new Date(session.date);
+              meta.textContent = isNaN(dt.getTime())
+                ? "Date unknown"
+                : dt.toLocaleString();
+            } else {
+              meta.textContent = "Date unknown";
+            }
+
+            const preview = (session.aiResponse || "").trim();
+            const previewEl = document.createElement("div");
+            previewEl.className = "history-meta";
+            previewEl.textContent =
+              preview.length > 150 ? preview.slice(0, 150) + "..." : preview;
+
+            const full = document.createElement("div");
+            full.style.display = "none";
+            full.style.marginTop = "4px";
+            full.style.fontSize = "11px";
+            full.style.color = "#e5e7eb";
+            full.textContent = preview;
+
+            main.appendChild(title);
+            main.appendChild(meta);
+            main.appendChild(previewEl);
+            main.appendChild(full);
+
+            const actions = document.createElement("div");
+
+            const btn = document.createElement("button");
+            btn.type = "button";
+            btn.textContent = "View Full";
+            btn.style.fontSize = "11px";
+            btn.style.padding = "4px 8px";
+            btn.style.borderRadius = "999px";
+            btn.style.border = "1px solid rgba(55, 65, 81, 0.9)";
+            btn.style.background = "transparent";
+            btn.style.color = "#e5e7eb";
+            btn.style.cursor = "pointer";
+
+            btn.addEventListener("click", function () {
+              const isOpen = full.style.display === "block";
+              full.style.display = isOpen ? "none" : "block";
+              btn.textContent = isOpen ? "View Full" : "Hide";
+            });
+
+            actions.appendChild(btn);
+
+            li.appendChild(main);
+            li.appendChild(actions);
+            historyList.appendChild(li);
+          });
+        }
+
+        function saveSession(payload, aiResponseText) {
+          const sessions = loadHistory();
+          const entry = {
+            date: new Date().toISOString(),
+            workoutType: payload.workoutType,
+            duration: payload.durationMinutes,
+            intensity: payload.intensity,
+            bodyWeight:
+              payload.bodyWeight + " " + payload.weightUnit.toUpperCase(),
+            feedback: payload.feedback,
+            aiResponse: aiResponseText,
+          };
+          sessions.unshift(entry);
+          const trimmed =
+            sessions.length > maxSavedRuns
+              ? sessions.slice(0, maxSavedRuns)
+              : sessions;
+          saveHistory(trimmed);
+        }
+
+        function synthesizeTargets(payload) {
+          const duration = payload.durationMinutes;
+          const intensity = payload.intensity;
+          const weight = payload.bodyWeight;
+
+          let intensityFactor = 1;
+          if (intensity === "Light") intensityFactor = 0.8;
+          else if (intensity === "Moderate") intensityFactor = 1;
+          else if (intensity === "Hard") intensityFactor = 1.2;
+          else if (intensity === "Max Effort") intensityFactor = 1.4;
+
+          const weightKg = payload.weightUnit === "kg" ? weight : weight / 2.20462;
+          const baseCarbs = Math.round((duration / 30) * intensityFactor * 25);
+          const baseProtein = Math.round(weightKg * 1.6);
+          const baseFluids = Math.round((duration / 30) * intensityFactor * 250);
+
+          let carbBias = 0;
+          let recoveryBias = 0;
+          let cravingFlag = false;
+
+          const feedbackText = (payload.feedback || "").toLowerCase();
+
+          if (feedbackText.includes("craving") || feedbackText.includes("hungry")) {
+            carbBias += 0.15;
+            cravingFlag = true;
+          }
+          if (feedbackText.includes("sluggish") || feedbackText.includes("heavy")) {
+            recoveryBias += 0.2;
+          }
+          if (feedbackText.includes("still gaining") || feedbackText.includes("gaining")) {
+            carbBias -= 0.1;
+          }
+
+          const carbohydrates = Math.max(
+            20,
+            Math.round(baseCarbs * (1 + carbBias))
+          );
+          const protein = Math.max(20, baseProtein);
+          const fluids = Math.max(
+            250,
+            Math.round(baseFluids * (1 + recoveryBias))
+          );
+
+          let sleep = 7.5;
+          if (intensity === "Hard") sleep = 8;
+          if (intensity === "Max Effort") sleep = 8.5;
+
+          const summaryLines = [];
+          summaryLines.push(
+            intensity === "Light"
+              ? "Today is a great day to protect your recovery while staying consistent."
+              : intensity === "Max Effort"
+              ? "This session stresses the system — your job now is to over-deliver on recovery."
+              : "You put meaningful stress on the system — nutrition now decides whether it turns into adaptation."
+          );
+
+          if (cravingFlag) {
+            summaryLines.push(
+              "You mentioned cravings: prioritize real-food carbs earlier in the day and avoid going to bed under-fueled."
+            );
+          }
+
+          if (recoveryBias > 0.15) {
+            summaryLines.push(
+              "Feeling sluggish is a signal — lean harder into fluids, electrolytes, and an earlier wind-down tonight."
+            );
+          }
+
+          const summaryTag =
+            carbohydrates + "g carbs · " + protein + "g protein · " + fluids + "ml";
+
+          return {
+            carbohydrates: carbohydrates,
+            protein: protein,
+            fluids: fluids,
+            sleepHours: sleep,
+            notes: summaryLines,
+            summaryTag: summaryTag,
+          };
+        }
+
+        function renderResults(payload, targets) {
+          resultsBody.innerHTML = "";
+          resultsSection.hidden = false;
+          resultsSummaryTag.textContent = targets.summaryTag;
+
+          const metricGrid = document.createElement("div");
+          metricGrid.className = "metric-grid";
+
+          function addMetric(label, value, caption) {
+            const card = document.createElement("div");
+            card.className = "metric-card";
+            const lbl = document.createElement("div");
+            lbl.className = "metric-label";
+            lbl.textContent = label;
+            const val = document.createElement("div");
+            val.className = "metric-value";
+            val.textContent = value;
+            const cap = document.createElement("div");
+            cap.className = "metric-caption";
+            cap.textContent = caption;
+            card.appendChild(lbl);
+            card.appendChild(val);
+            card.appendChild(cap);
+            metricGrid.appendChild(card);
+          }
+
+          addMetric(
+            "Carbohydrates",
+            targets.carbohydrates + " g",
+            "Center these around your training window and earlier in the day."
+          );
+          addMetric(
+            "Protein",
+            targets.protein + " g",
+            "Distribute across 3–4 meals, anchored after training."
+          );
+          addMetric(
+            "Fluids",
+            targets.fluids + " ml",
+            "Front-load around the session with small top-ups through the day."
+          );
+          addMetric(
+            "Sleep",
+            targets.sleepHours.toFixed(1) + " hrs",
+            "Protect this block as your main recovery lever tonight."
+          );
+
+          const summary = document.createElement("div");
+          summary.className = "summary-block";
+          summary.innerHTML =
+            "<strong>Coach's note:</strong> " + targets.notes.join(" ");
+
+          const pills = document.createElement("div");
+          pills.className = "pill-row";
+
+          const p1 = document.createElement("span");
+          p1.className = "small-pill";
+          p1.textContent =
+            payload.workoutType + " · " + payload.durationMinutes + " min";
+
+          const p2 = document.createElement("span");
+          p2.className = "small-pill";
+          p2.textContent = "Intensity: " + payload.intensity;
+
+          const p3 = document.createElement("span");
+          p3.className = "small-pill";
+          p3.textContent =
+            "Body weight: " +
+            payload.bodyWeight +
+            " " +
+            payload.weightUnit.toUpperCase();
+
+          pills.appendChild(p1);
+          pills.appendChild(p2);
+          pills.appendChild(p3);
+
+          resultsBody.appendChild(metricGrid);
+          resultsBody.appendChild(summary);
+          resultsBody.appendChild(pills);
+        }
+
+        function renderAiResults(payload, aiText) {
+          const safeText = (aiText || "").trim();
+          resultsBody.innerHTML = "";
+          resultsSection.hidden = false;
+          const summaryTag = "AI targets ready";
+          resultsSummaryTag.textContent = summaryTag;
+
+          const card = document.createElement("div");
+          card.className = "summary-block fade-in-card";
+
+          const lines = safeText.split(/\r?\n/);
+          let hasContent = false;
+          lines.forEach(function (line) {
+            const trimmed = line.trim();
+            if (!trimmed) return;
+            hasContent = true;
+            const p = document.createElement("p");
+            p.className = "ai-line";
+            if (/^(\d+[\).\s-]|[-•])\s*/.test(trimmed)) {
+              p.classList.add("ai-line--highlight");
+            }
+            p.textContent = trimmed;
+            card.appendChild(p);
+          });
+
+          if (!hasContent) {
+            card.textContent = "No details returned from the coach.";
+          }
+
+          const pills = document.createElement("div");
+          pills.className = "pill-row";
+
+          const p1 = document.createElement("span");
+          p1.className = "small-pill";
+          p1.textContent =
+            payload.workoutType + " · " + payload.durationMinutes + " min";
+
+          const p2 = document.createElement("span");
+          p2.className = "small-pill";
+          p2.textContent = "Intensity: " + payload.intensity;
+
+          const p3 = document.createElement("span");
+          p3.className = "small-pill";
+          p3.textContent =
+            "Body weight: " +
+            payload.bodyWeight +
+            " " +
+            payload.weightUnit.toUpperCase();
+
+          pills.appendChild(p1);
+          pills.appendChild(p2);
+          pills.appendChild(p3);
+
+          resultsBody.appendChild(card);
+          resultsBody.appendChild(pills);
+        }
+
+        async function maybeCallOpenAI(payload) {
+          if (typeof CONFIG === "undefined") {
+            throw new Error("Missing CONFIG. Ensure config.js is loaded.");
+          }
+
+          const endpoint = CONFIG.OPENAI_ENDPOINT || "/api/fitcoach";
+
+          const systemPrompt =
+            "You are FitCoach AI, an expert fitness, nutrition, and recovery coach. " +
+            "You give precise, evidence-based recommendations that are practical for everyday athletes. " +
+            "Be concise, and format your response into clearly labeled sections.";
+
+          const userPrompt =
+            "Here is the athlete's session and current context:\n\n" +
+            "- Workout type: " +
+            payload.workoutType +
+            "\n" +
+            "- Duration: " +
+            payload.durationMinutes +
+            " minutes\n" +
+            "- Intensity: " +
+            payload.intensity +
+            "\n" +
+            "- Body weight: " +
+            payload.bodyWeight +
+            " " +
+            payload.weightUnit.toUpperCase() +
+            "\n" +
+            "- Feedback: " +
+            (payload.feedback || "n/a") +
+            "\n\n" +
+            "Please return:\n" +
+            "1) Daily calorie target\n" +
+            "2) Daily protein target in grams\n" +
+            "3) Recommended sleep hours tonight\n" +
+            "4) A 2–3 sentence personalized insight based on the feedback\n\n" +
+            "Format the response with clear labeled sections so it's easy to scan in a UI.";
+
+          const body = {
+            model: CONFIG.OPENAI_MODEL || "gpt-4.1-mini",
+            input: [
+              {
+                role: "system",
+                content: [
+                  {
+                    type: "input_text",
+                    text: systemPrompt,
+                  },
+                ],
+              },
+              {
+                role: "user",
+                content: [
+                  {
+                    type: "input_text",
+                    text: userPrompt,
+                  },
+                ],
+              },
+            ],
+          };
+
+          const res = await fetch(endpoint, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(body),
+          });
+
+          if (!res.ok) {
+            throw new Error("HTTP " + res.status);
+          }
+
+          const data = await res.json();
+          const aiText = data.output?.[0]?.content?.[0]?.text;
+          if (!aiText || typeof aiText !== "string") {
+            throw new Error("Empty or malformed AI response");
+          }
+
+          return aiText.trim();
+        }
+
+        function attachClearHistoryHandlers() {
+          if (!historyClearButton) return;
+
+          historyClearButton.addEventListener("click", function () {
+            const sessions = loadHistory();
+            const count = sessions.length;
+            historyConfirmText.textContent =
+              "Are you sure? This will delete all " +
+              count +
+              " " +
+              (count === 1 ? "session." : "sessions.");
+            historyConfirm.hidden = false;
+          });
+
+          historyConfirmNo.addEventListener("click", function () {
+            historyConfirm.hidden = true;
+          });
+
+          historyConfirmYes.addEventListener("click", function () {
+            try {
+              window.localStorage.removeItem(localStorageKey);
+            } catch (e) {
+              console.error("FitCoach clear history error", e);
+            }
+
+            historyConfirm.hidden = true;
+            if (historySuccessMessage) {
+              historySuccessMessage.textContent = "History cleared";
+              historySuccessMessage.style.opacity = 1;
+              setTimeout(function () {
+                historySuccessMessage.style.opacity = 0;
+              }, 3000);
+            }
+
+            renderHistory();
+          });
+        }
+
+        form.addEventListener("submit", async function (event) {
+          event.preventDefault();
+
+          const workoutType = workoutTypeInput.value.trim();
+          const durationRaw = durationInput.value.trim();
+          const intensity = intensitySelect.value;
+          const bodyWeightRaw = bodyWeightInput.value.trim();
+          const feedback = feedbackInput.value.trim();
+
+          if (!workoutType || !durationRaw || !bodyWeightRaw || !intensity) {
+            setStatus("Please fill in all required fields", "error");
+            return;
+          }
+
+          const duration = parseInt(durationRaw, 10);
+          const bodyWeight = parseFloat(bodyWeightRaw);
+
+          if (!duration || duration <= 0 || !bodyWeight || bodyWeight <= 0) {
+            setStatus("Please fill in all required fields", "error");
+            return;
+          }
+
+          const payload = {
+            workoutType: workoutType,
+            durationMinutes: duration,
+            intensity: intensity,
+            bodyWeight: bodyWeight,
+            weightUnit: weightUnit,
+            feedback: feedback,
+          };
+
+          toggleLoading(true);
+          setStatus("Analyzing your data...", "loading");
+
+          try {
+            const aiText = await maybeCallOpenAI(payload);
+            renderAiResults(payload, aiText);
+            saveSession(payload, aiText);
+            renderHistory();
+            setStatus("");
+          } catch (error) {
+            console.error("FitCoach fetch error:", error);
+            setStatus(
+              "Something went wrong. Check the console for details.",
+              "error"
+            );
+          } finally {
+            toggleLoading(false);
+          }
+        });
+
+        renderHistory();
+        attachClearHistoryHandlers();
+        setStatus("");
+      })();
+    </script>
+  </body>
+</html>
+
